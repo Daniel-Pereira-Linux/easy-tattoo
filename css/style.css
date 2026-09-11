@@ -390,3 +390,31 @@ footer .fine { color: var(--text-muted); font-size: 12px; }
 	section { padding: 60px 0; }
 	.hero { min-height: 82vh; }
 }
+
+/* ---------- botão de música flutuante ---------- */
+.music-float {
+	position: fixed;
+	bottom: 22px; left: 22px;
+	z-index: 60;
+	width: 52px; height: 52px;
+	border-radius: 50%;
+	background: var(--card);
+	border: 1px solid var(--pink);
+	color: var(--pink-soft);
+	font-size: 20px;
+	cursor: pointer;
+	display: flex; align-items: center; justify-content: center;
+	box-shadow: 0 0 16px rgba(255, 47, 196, 0.25);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.music-float:hover { transform: translateY(-2px) scale(1.05); }
+.music-float.playing {
+	border-color: var(--green);
+	color: var(--green-soft);
+	animation: musicSpin 3.5s linear infinite, musicGlow 2s ease-in-out infinite;
+}
+@keyframes musicSpin { to { transform: rotate(360deg); } }
+@keyframes musicGlow {
+	0%, 100% { box-shadow: 0 0 14px rgba(157, 255, 46, 0.3); }
+	50% { box-shadow: 0 0 26px rgba(157, 255, 46, 0.6); }
+}

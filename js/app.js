@@ -145,10 +145,91 @@
 		document.addEventListener('keydown', (e) => { if (e.key === 'Escape') lightbox.classList.remove('open'); });
 	}
 
+	/* ---------- música de fundo (YouTube) ----------
+	   Navegadores bloqueiam áudio com som automático sem interação do
+	   usuário (política de todos os browsers modernos, mobile e desktop —
+	   não dá pra contornar isso via código). A gente faz o melhor possível:
+	   1) tenta autoplay direto (funciona em alguns casos/navegadores);
+	   2) qualquer primeiro toque/clique na página já liga o som sozinho;
+	   3) o botão flutuante deixa ligar/desligar manualmente a qualquer hora. */
+	function initMusic() {
+		const YT_VIDEO_ID = '5qm8PH4xAss';
+		const btn = document.getElementById('music-toggle');
+		const container = document.getElementById('yt-player');
+		if (!btn || !container || !window.location.protocol.startsWith('http')) {
+			if (btn) btn.style.display = 'none';
+			return;
+		}
+
+		let player = null;
+		let ready = false;
+		let wantsPlaying = false;
+
+		function setBtnState(playing) {
+			wantsPlaying = playing;
+			btn.classList.toggle('playing', playing);
+			btn.textContent = playing ? '🔊' : '🔇';
+			btn.setAttribute('aria-label', playing ? 'Desativar som' : 'Ativar som');
+		}
+
+		function tryStart() {
+			if (!ready || !player) return;
+			try {
+				player.unMute();
+				player.playVideo();
+				setBtnState(true);
+			} catch (e) {}
+		}
+
+		window.onYouTubeIframeAPIReady = function () {
+			player = new YT.Player('yt-player', {
+				videoId: YT_VIDEO_ID,
+				playerVars: {
+					autoplay: 1, mute: 1, loop: 1, playlist: YT_VIDEO_ID,
+					controls: 0, disablekb: 1, fs: 0, modestbranding: 1, playsinline: 1,
+				},
+				events: {
+					onReady: (e) => {
+						ready = true;
+						e.target.playVideo();
+						// tenta com som direto; se o navegador bloquear, continua
+						// mudo até a primeira interação (ver listener abaixo).
+						tryStart();
+					},
+					onStateChange: (e) => {
+						if (e.data === YT.PlayerState.PLAYING) setBtnState(!player.isMuted());
+						if (e.data === YT.PlayerState.PAUSED) btn.classList.remove('playing');
+					},
+				},
+			});
+		};
+
+		const tag = document.createElement('script');
+		tag.src = 'https://www.youtube.com/iframe_api';
+		document.head.appendChild(tag);
+
+		// primeira interação em QUALQUER lugar da página já liga o som
+		const firstInteraction = () => { tryStart(); };
+		['pointerdown', 'keydown', 'touchstart'].forEach(evt =>
+			document.addEventListener(evt, firstInteraction, { once: true, passive: true })
+		);
+
+		btn.addEventListener('click', () => {
+			if (!ready) return;
+			if (wantsPlaying) {
+				player.pauseVideo();
+				setBtnState(false);
+			} else {
+				tryStart();
+			}
+		});
+	}
+
 	document.addEventListener('DOMContentLoaded', () => {
 		initPixelFX();
 		initNav();
 		initReveal();
 		initLightbox();
+		initMusic();
 	});
 })();
