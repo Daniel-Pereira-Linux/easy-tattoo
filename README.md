@@ -4,9 +4,9 @@ Site do estúdio de tatuagem Easy Tattoo.
 
 ## Antes de publicar de vez, edite:
 
-- **Endereço** e **horário** em `index.html`, seção `#local` (marcados com a tag vermelha "editar").
-- **@ do Instagram** em `index.html`, seção `#local` e no rodapé.
-- O número de WhatsApp já está configurado: `+55 83 99815-5118` (aparece em vários botões — procure por `5583998155118` se precisar trocar).
+- **Endereço** e **horário** em `index.html`, seção `#local` (marcados com a tag vermelha "editar" — só falta o endereço).
+
+Já configurados: WhatsApp (`+55 83 99815-5118`) e Instagram (`@easytatto83`).
 
 ## Rodando localmente
 
